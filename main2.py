@@ -30,25 +30,11 @@ def fitnessFunction(individual):
     return(fitness)
     
 
-def generatePopulation(populationSize, intervalMin, intervalMax):
+def generatePopulation(populationSize):
     population = []
     for _ in range(1,populationSize+1):
         myChromosomeX1 = generateChromosome(5)
         myChromosomeX2 = generateChromosome(5)
-        # while True:
-        #     c = generateChromosome(5)
-        #     x = calculateDecimalValue(c)
-        #     if(x >= intervalMin and x <= intervalMax):
-        #         myChromosomeX1 = c
-        #         break
-        # while True:
-        #     c = generateChromosome(5)
-        #     x = calculateDecimalValue(c)
-        #     if(x >= intervalMin and x <= intervalMax):
-        #         myChromosomeX2 = c
-        #         break
-    
-    
         finalChromosome = myChromosomeX1 + myChromosomeX2
         population.append(finalChromosome)
     return population
@@ -101,7 +87,7 @@ def selection(population):
     return [index1,index2]
 
 def crossover(parent1,parent2):
-    mask = generatePopulation(1,3,4)[0]
+    mask = generatePopulation(1)[0]
     
     child1 = []
     child2 = []
@@ -120,14 +106,10 @@ def mutation(individual, rate):
     mutatedChromosome = individual.copy()
     for i in range(len(mutatedChromosome)):
         if np.random.rand() < rate:
-            # Pilih gen yang akan dimutasi
-            gene_to_move = mutatedChromosome[i]
-            # Hapus gen tersebut dari posisi asalnya
+            geneToMove = mutatedChromosome[i]
             del mutatedChromosome[i]
-            # Pilih posisi baru untuk memasukkan gen
-            new_index = np.random.randint(0, len(mutatedChromosome))
-            # Masukkan gen ke posisi baru
-            mutatedChromosome.insert(new_index, gene_to_move)
+            newIndex = np.random.randint(0, len(mutatedChromosome))
+            mutatedChromosome.insert(newIndex, geneToMove)
     return mutatedChromosome
 
 def evaluation(population, intervalMin, intervalMax):
@@ -198,25 +180,11 @@ def GENETIC_ALGORITHM(initPopulation, generation):
 
 
 def main():
-    initPopulation = generatePopulation(50, 3, 10)
-    fitnesses = []
-    
-    for individual in initPopulation:
-        fitness = fitnessFunction(individual)
-        fitnesses.append(fitness)
-    
-    head = ["Chromosome", "Fitness"]
-
-    plotTableDump = list(zip(initPopulation,fitnesses))
-    result = [list(item) for item in plotTableDump]
-
-    # print(tabulate(result, headers=head, tablefmt="grid"))
+    initPopulation = generatePopulation(50)
 
     res = GENETIC_ALGORITHM(initPopulation,30)
 
     generationList = [element["generation"] for element in res]
-    # fitnessList = [ (sum(element["fitnesses"]) / len(element["fitnesses"])) for element in res ]
-    # fitnessList = [ (max(element["fitnesses"]) for element in res ) ]
     fitnessList =[element["fitnesses"] for element in res]
     maxFitnessList = [max(sublist) for sublist in fitnessList]
     plt.plot(generationList, maxFitnessList)
